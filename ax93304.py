@@ -1,4 +1,4 @@
-#Version 1.21
+#Version 1.22
 import serial
 import socket
 
@@ -43,7 +43,10 @@ def getHostname():
     return socket.gethostname()
 
 def getInterfaceIp(interface):
-    return "192.168.100.200"  # Placeholder for actual IP retrieval
+    if interface == "eth0":
+        return "192.168.100.200"  # Placeholder for actual IP retrieval
+    else:
+        return "192.0.2.100"  # Placeholder for actual IP retrieval
 
 def initDisplay():
     backlightControl(True)
@@ -106,7 +109,7 @@ while True:
         case 1:
             #setCursorPosition(1, 0)
             lanIface = "eth0"
-            wanIface = "eth0"
+            wanIface = "eth1"
             lcmSerial.write(("LAN IP:" + getInterfaceIp(lanIface)).encode('utf-8'))  # Send text to display
             setCursorPosition(2, 0)  # Move cursor to line 2, position 0
             lcmSerial.write(("WAN IP:" + getInterfaceIp(wanIface)).encode('utf-8'))  # Send text to display
