@@ -1,4 +1,4 @@
-#Version 1.18
+#Version 1.19
 import serial
 import socket
 
@@ -98,7 +98,7 @@ while True:
     match page:
         case 0:
             #setCursorPosition(1, 0)
-            lcmSerial.write("Line 1 \r\nLine 2".encode('utf-8'))  # Send text to display
+            lcmSerial.write("123456789112345678921234567893123456789".encode('utf-8'))  # Send text to display
             # setCursorPosition(2, 0)  # Move cursor to line 2, position 0
             # lcmSerial.write(getHostname().encode('utf-8'))  # Send text to line 2
         case 1:
