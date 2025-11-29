@@ -70,21 +70,22 @@ def writeDisplay(page):
             setCursorPosition(2, 0)  # Move cursor to line 2, position 0
             lcmSerial.write(f"WAN:{getInterfaceIp(wanIface)}".encode('utf-8'))  # Send text to display
         case 2:
-            page = 0  # Reset page to 0
+            page = 1 
             page = writeDisplay(page)
         case -1:
-            page = 0  # Set page to last page
+            page = 0 
             page = writeDisplay(page)
     return page
 
 
 initDisplay()
 page = 0
+writeDisplay(page)
 
 lcmSerial.write(b'\xFD')  # Keypad listen mode 
 while True:
     serialData = lcmSerial.read()
-    print(serialData)
+    # print(serialData)
     if serialData == b'\x47':  # If 'RIGHT' key is pressed
         print("RIGHT key pressed")
         shiftDisplayRight()
