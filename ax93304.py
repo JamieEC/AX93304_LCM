@@ -1,4 +1,4 @@
-#Version 1.8
+#Version 1.9
 import serial
 import socket
 
@@ -67,19 +67,21 @@ def readButtons(page, position):
     if serialData == b'\x47':  # If 'RIGHT' key is pressed
         print("RIGHT key pressed")
         position = shiftDisplayRight(position)
+        print(f"Current position: {position}")
     elif serialData == b'\x4E':  # If 'LEFT' key is pressed
         print("LEFT key pressed")
         position = shiftDisplayLeft(position)
+        print(f"Current position: {position}")
     elif serialData == b'\x4D':  # If 'UP' key is pressed
         print("UP key pressed")
         page += 1
-        clearDisplay()
+        initDisplay()
         position = 0
         print(f"Current page: {page}")
     elif serialData == b'\x4B':  # If 'DOWN' key is pressed
         print("DOWN key pressed")
         page -= 1
-        clearDisplay
+        initDisplay()
         position = 0
         print(f"Current page: {page}")
     return page, position
