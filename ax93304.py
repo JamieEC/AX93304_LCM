@@ -42,34 +42,55 @@ def getHostname():
     return socket.gethostname()
 
 def getInterfaceIp(interface):
-    return "192.168.0.1"
+    return "192.168.100.200"  # Placeholder for actual IP retrieval
 
 def initDisplay():
     backlightControl(True)
     clearDisplay()
     homePosition()
 
+def shiftDisplayLeft():
+    lcmSerial.write(b'\xFE\x18')  # Command to shift display left
+
+def shiftDisplayRight():
+    lcmSerial.write(b'\xFE\x1C')  # Command to shift display right
+
+def writeDisplay(page)
+    match page:
+        case 0:
+            lcmSerial.write("HOST:".encode('utf-8'))  # Send text to display
+            setCursorPosition(2, 0)  # Move cursor to line 2, position 0
+            lcmSerial.write(getHostname().encode('utf-8'))  # Send text to line 2
+        case 1:
+            lanIface = "eth0"
+            wanIface = "eth0"
+            lcmSerial.write(f"LAN:{getInterfaceIp(lanIface)}".encode('utf-8'))  # Send text to display
+            setCursorPosition(2, 0)  # Move cursor to line 2, position 0
+            lcmSerial.write(f"WAN:{getInterfaceIp(wanIface)}".encode('utf-8'))  # Send text to display
+        case 2:
+            page = 0  # Reset page to 0
+        case -1:
+            page = 0  # Set page to last page
+    return page
+
+
 initDisplay()
-
 page = 0
-
-match page:
-    case 0:
-        lcmSerial.write("HOST:".encode('utf-8'))  # Send text to display
-        setCursorPosition(2, 0)  # Move cursor to line 2, position 0
-        lcmSerial.write(getHostname().encode('utf-8'))  # Send text to line 2
-    case 1:
-        lanIface = "eth0"
-        wanIface = "eth0"
-        lcmSerial.write(f"LAN:{getInterfaceIp(lanIface)}".encode('utf-8'))  # Send text to display
-        setCursorPosition(2, 0)  # Move cursor to line 2, position 0
-        lcmSerial.write(f"WAN:{getInterfaceIp(wanIface)}".encode('utf-8'))  # Send text to display
-    case 2:
-        page = 0  # Reset page to 0
 
 lcmSerial.write(b'\xFD')  # Keypad listen mode 
 while True:
     serialData = lcmSerial.read()
     print(serialData)
+    if serialData == b'\x47':  # If 'RIGHT' key is pressed
+        shiftDisplayRight()
+    elif serialData == b'\x4E':  # If 'LEFT' key is pressed
+        shiftDisplayLeft()
+    elif serialData == b'\x4D':  # If 'UP' key is pressed
+        page += 1
+        page = writeDisplay(page)
+    elif serialData == b'\x4B':  # If 'DOWN' key is pressed
+        page -= 1
+        page = writeDisplay(page)
+
 
 lcmSerial.close()  # Close the serial connection
