@@ -12,9 +12,11 @@ def backlightControl(on):
         lcmSerial.write(b'\xFC')  # Command to turn backlight off
 
 def homePosition():
+    print("Moving cursor to home position...")
     lcmSerial.write(b'\xFE\x02')  # Command to move to home position
 
 def clearDisplay():
+    print("Clearing display...")
     lcmSerial.write(b'\xFE\x01')  # Command to clear display
 
 def displayControl(on):
@@ -94,19 +96,21 @@ while True:
     match page:
         case 0:
             #clearDisplay()
-            lcmSerial.write("sHOST:".encode('utf-8'))  # Send text to display
+            lcmSerial.write("HOST:".encode('utf-8'))  # Send text to display
             setCursorPosition(2, 0)  # Move cursor to line 2, position 0
             lcmSerial.write(getHostname().encode('utf-8'))  # Send text to line 2
         case 1:
             #clearDisplay()
             lanIface = "eth0"
             wanIface = "eth0"
-            lcmSerial.write(f"sLAN:{getInterfaceIp(lanIface)}".encode('utf-8'))  # Send text to display
+            lcmSerial.write(f"LAN:{getInterfaceIp(lanIface)}".encode('utf-8'))  # Send text to display
             setCursorPosition(2, 0)  # Move cursor to line 2, position 0
             lcmSerial.write(f"WAN:{getInterfaceIp(wanIface)}".encode('utf-8'))  # Send text to display
         case 2:
             page = 1
+            print("Invalid page, resetting to page 1")
         case -1:
             page = 0 
+            print("Invalid page, resetting to page 0")
 
     page, position = readButtons(page, position)
