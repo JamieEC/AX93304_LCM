@@ -1,4 +1,4 @@
-#Version 1.10
+#Version 1.11
 import serial
 import socket
 
@@ -88,10 +88,13 @@ def readButtons(page, position):
         print(f"Current page: {page}")
     return page, position
 
-displayControl(False)
-
-
 initDisplay()
+displayControl(False)
+initDisplay()
+input("Press Enter to continue...")
+displayControl(True)
+initDisplay()
+
 page = 0
 position = 0
 
