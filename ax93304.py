@@ -1,4 +1,5 @@
 import serial
+import socket
 
 lcmDevice = "/dev/cuau1"
 
@@ -29,16 +30,20 @@ def shiftCursorRight():
     lcmSerial.write(b'\xFE\x14')  # Command to shift cursor right
 
 def setCursorPosition(line, position):
+    # line: 1 or 2, position: 0-15
     if line == 1:
         cmd = 0x80 + position
     elif line == 2:
         cmd = 0xC0 + position
     lcmSerial.write(bytes([0xFE, cmd]))  # Command to set cursor position
     
+def getHostname():
+    return socket.gethostname()
+
+
 backlightControl(True)  # Turn backlight on
 homePosition()         # Move to home position
-lcmSerial.write("Hello, World!".encode('utf-8'))  # Send text to display
+lcmSerial.write("HOST:".encode('utf-8'))  # Send text to display
 setCursorPosition(2, 0)  # Move cursor to line 2, position 0
-lcmSerial.write("Line 2 Text".encode('utf-8'))  # Send text to line 2
+lcmSerial.write(getHostname().encode('utf-8'))  # Send text to line 2
 lcmSerial.close()  # Close the serial connection
-
