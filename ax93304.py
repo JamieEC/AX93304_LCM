@@ -1,4 +1,4 @@
-#Version 1.9
+#Version 1.10
 import serial
 import socket
 
@@ -87,6 +87,9 @@ def readButtons(page, position):
         position = 0
         print(f"Current page: {page}")
     return page, position
+
+displayControl(False)
+displayControl(True)
 
 initDisplay()
 page = 0
