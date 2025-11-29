@@ -1,4 +1,4 @@
-#Version 1.23
+#Version 1.24
 import serial
 import socket
 
@@ -127,7 +127,7 @@ while True:
             page = 0 
             print("Invalid page, resetting to page 0")
         case 4:
-            page = maxPage
+            page = 3
             print("Invalid page, resetting to page 1")
 
 
