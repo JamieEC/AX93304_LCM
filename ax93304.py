@@ -58,10 +58,12 @@ def shiftDisplayRight():
 def writeDisplay(page):
     match page:
         case 0:
+            clearDisplay()
             lcmSerial.write("HOST:".encode('utf-8'))  # Send text to display
             setCursorPosition(2, 0)  # Move cursor to line 2, position 0
             lcmSerial.write(getHostname().encode('utf-8'))  # Send text to line 2
         case 1:
+            clearDisplay()
             lanIface = "eth0"
             wanIface = "eth0"
             lcmSerial.write(f"LAN:{getInterfaceIp(lanIface)}".encode('utf-8'))  # Send text to display
@@ -69,8 +71,10 @@ def writeDisplay(page):
             lcmSerial.write(f"WAN:{getInterfaceIp(wanIface)}".encode('utf-8'))  # Send text to display
         case 2:
             page = 0  # Reset page to 0
+            page = writeDisplay(page)
         case -1:
             page = 0  # Set page to last page
+            page = writeDisplay(page)
     return page
 
 
@@ -91,10 +95,12 @@ while True:
         print("UP key pressed")
         page += 1
         page = writeDisplay(page)
+        print(f"Current page: {page}")
     elif serialData == b'\x4B':  # If 'DOWN' key is pressed
         print("DOWN key pressed")
         page -= 1
         page = writeDisplay(page)
+        print(f"Current page: {page}")
 
 
 lcmSerial.close()  # Close the serial connection
