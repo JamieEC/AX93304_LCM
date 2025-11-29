@@ -1,4 +1,4 @@
-#Version 1.17
+#Version 1.18
 import serial
 import socket
 
@@ -97,16 +97,16 @@ position = 0
 while True:
     match page:
         case 0:
-            setCursorPosition(1, position)
-            lcmSerial.write("Hostname".encode('utf-8'))  # Send text to display
-            setCursorPosition(2, position)  # Move cursor to line 2, position 0
-            lcmSerial.write(getHostname().encode('utf-8'))  # Send text to line 2
+            #setCursorPosition(1, 0)
+            lcmSerial.write("Line 1 \r\nLine 2".encode('utf-8'))  # Send text to display
+            # setCursorPosition(2, 0)  # Move cursor to line 2, position 0
+            # lcmSerial.write(getHostname().encode('utf-8'))  # Send text to line 2
         case 1:
-            setCursorPosition(1, position)
+            #setCursorPosition(1, 0)
             lanIface = "eth0"
             wanIface = "eth0"
             lcmSerial.write(("LAN IP:" + getInterfaceIp(lanIface)).encode('utf-8'))  # Send text to display
-            setCursorPosition(2, position)  # Move cursor to line 2, position 0
+            setCursorPosition(2, 0)  # Move cursor to line 2, position 0
             lcmSerial.write(("WAN IP:" + getInterfaceIp(wanIface)).encode('utf-8'))  # Send text to display
         case 2:
             page = 1
