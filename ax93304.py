@@ -1,4 +1,4 @@
-#Version 1.11
+#Version 1.14
 import serial
 import socket
 
@@ -88,10 +88,6 @@ def readButtons(page, position):
         print(f"Current page: {page}")
     return page, position
 
-initDisplay()
-displayControl(False)
-initDisplay()
-input("Press Enter to continue...")
 displayControl(True)
 initDisplay()
 
@@ -105,13 +101,15 @@ while True:
             lcmSerial.write("HOST:".encode('utf-8'))  # Send text to display
             setCursorPosition(2, 0)  # Move cursor to line 2, position 0
             lcmSerial.write(getHostname().encode('utf-8'))  # Send text to line 2
+            homePosition()
         case 1:
             #clearDisplay()
             lanIface = "eth0"
             wanIface = "eth0"
-            lcmSerial.write(f"LAN:{getInterfaceIp(lanIface)}".encode('utf-8'))  # Send text to display
+            lcmSerial.write(("LAN:" + getInterfaceIp(lanIface)).encode('utf-8'))  # Send text to display
             setCursorPosition(2, 0)  # Move cursor to line 2, position 0
-            lcmSerial.write(f"WAN:{getInterfaceIp(wanIface)}".encode('utf-8'))  # Send text to display
+            lcmSerial.write(("WAN:" + getInterfaceIp(wanIface)).encode('utf-8'))  # Send text to display
+            homePosition()
         case 2:
             page = 1
             print("Invalid page, resetting to page 1")
