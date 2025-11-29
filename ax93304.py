@@ -1,4 +1,4 @@
-#Version 1.22
+#Version 1.23
 import serial
 import socket
 
@@ -107,17 +107,28 @@ while True:
             print("Moved cursor to line 2")
             lcmSerial.write(getHostname().encode('utf-8'))  # Send text to line 2
         case 1:
-            #setCursorPosition(1, 0)
+            setCursorPosition(1, 0)
             lanIface = "eth0"
-            wanIface = "eth1"
-            lcmSerial.write(("LAN IP:" + getInterfaceIp(lanIface)).encode('utf-8'))  # Send text to display
+            lcmSerial.write("LAN IP".encode('utf-8'))  # Send text to display
             setCursorPosition(2, 0)  # Move cursor to line 2, position 0
-            lcmSerial.write(("WAN IP:" + getInterfaceIp(wanIface)).encode('utf-8'))  # Send text to display
+            lcmSerial.write(getInterfaceIp(lanIface).encode('utf-8'))  # Send text to display
         case 2:
-            page = 1
-            print("Invalid page, resetting to page 1")
+            setCursorPosition(1, 0)
+            wanIface = "eth1"
+            lcmSerial.write("LAN IP".encode('utf-8'))  # Send text to display
+            setCursorPosition(2, 0)  # Move cursor to line 2, position 0
+            lcmSerial.write(getInterfaceIp(wanIface).encode('utf-8'))  # Send text to display
+        case 3:
+            setCursorPosition(1, 0)
+            lcmSerial.write("CPU".encode('utf-8'))  # Send text to display
+            setCursorPosition(2, 0)  # Move cursor to line 2, position 0
+            lcmSerial.write("38%".encode('utf-8'))  # Send text to display
         case -1:
             page = 0 
             print("Invalid page, resetting to page 0")
+        case 4:
+            page = maxPage
+            print("Invalid page, resetting to page 1")
+
 
     page, position = readButtons(page, position)
