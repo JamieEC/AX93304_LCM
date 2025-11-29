@@ -59,9 +59,11 @@ match page:
         setCursorPosition(2, 0)  # Move cursor to line 2, position 0
         lcmSerial.write(getHostname().encode('utf-8'))  # Send text to line 2
     case 1:
-        lcmSerial.write(f"LAN IP:{getInterfaceIp("eth0")}".encode('utf-8'))  # Send text to display
+        lanIface = "eth0"
+        wanIface = "eth0"
+        lcmSerial.write(f"LAN IP:{getInterfaceIp(lanIface)}".encode('utf-8'))  # Send text to display
         setCursorPosition(2, 0)  # Move cursor to line 2, position 0
-        lcmSerial.write(f"WAN IP:{getInterfaceIp("eth0")}".encode('utf-8'))  # Send text to display
+        lcmSerial.write(f"WAN IP:{getInterfaceIp(wanIface)}".encode('utf-8'))  # Send text to display
     case 2:
         page = 0  # Reset page to 0
         
