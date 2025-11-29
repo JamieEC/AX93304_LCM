@@ -10,10 +10,12 @@ def backlightControl(on):
     else:
         lcmSerial.write(b'\xFC')  # Command to turn backlight off
 
-while True:
-    backlightControl(True)  # Turn backlight on
-    # wait for 1 second
-    import time
-    time.sleep(1)
-    backlightControl(False)  # Turn backlight off
-    time.sleep(1)
+def homePosition():
+    lcmSerial.write(b'\xFE\x02')  # Command to move to home position
+
+
+backlightControl(True)  # Turn backlight on
+homePosition()         # Move to home position
+lcmSerial.write("Hello, World!".encode('utf-8'))  # Send text to display
+lcmSerial.close()  # Close the serial connection
+
