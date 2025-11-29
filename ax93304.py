@@ -51,7 +51,7 @@ def initDisplay():
 
 initDisplay()
 
-page = 1
+page = 0
 
 match page:
     case 0:
@@ -61,9 +61,9 @@ match page:
     case 1:
         lanIface = "eth0"
         wanIface = "eth0"
-        lcmSerial.write(f"LAN IP:{getInterfaceIp(lanIface)}".encode('utf-8'))  # Send text to display
+        lcmSerial.write(f"LAN:{getInterfaceIp(lanIface)}".encode('utf-8'))  # Send text to display
         setCursorPosition(2, 0)  # Move cursor to line 2, position 0
-        lcmSerial.write(f"WAN IP:{getInterfaceIp(wanIface)}".encode('utf-8'))  # Send text to display
+        lcmSerial.write(f"WAN:{getInterfaceIp(wanIface)}".encode('utf-8'))  # Send text to display
     case 2:
         page = 0  # Reset page to 0
         
