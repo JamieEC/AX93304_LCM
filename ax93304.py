@@ -1,4 +1,4 @@
-#Version 1.14
+#Version 1.15
 import serial
 import socket
 
@@ -98,18 +98,16 @@ while True:
     match page:
         case 0:
             #clearDisplay()
-            lcmSerial.write("HOST:".encode('utf-8'))  # Send text to display
+            lcmSerial.write("Hostname".encode('utf-8'))  # Send text to display
             setCursorPosition(2, 0)  # Move cursor to line 2, position 0
             lcmSerial.write(getHostname().encode('utf-8'))  # Send text to line 2
-            homePosition()
         case 1:
             #clearDisplay()
             lanIface = "eth0"
             wanIface = "eth0"
-            lcmSerial.write(("LAN:" + getInterfaceIp(lanIface)).encode('utf-8'))  # Send text to display
+            lcmSerial.write(("LAN IP:" + getInterfaceIp(lanIface)).encode('utf-8'))  # Send text to display
             setCursorPosition(2, 0)  # Move cursor to line 2, position 0
-            lcmSerial.write(("WAN:" + getInterfaceIp(wanIface)).encode('utf-8'))  # Send text to display
-            homePosition()
+            lcmSerial.write(("WAN IP:" + getInterfaceIp(wanIface)).encode('utf-8'))  # Send text to display
         case 2:
             page = 1
             print("Invalid page, resetting to page 1")
