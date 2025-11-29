@@ -98,7 +98,7 @@ while True:
     match page:
         case 0:
             #setCursorPosition(1, 0)
-            lcmSerial.write("Line 1                       Line 2".encode('utf-8'))  # Send text to display
+            lcmSerial.write("Line 1                       Line 2                       ".encode('utf-8'))  # Send text to display
             # setCursorPosition(2, 0)  # Move cursor to line 2, position 0
             # lcmSerial.write(getHostname().encode('utf-8'))  # Send text to line 2
         case 1:
