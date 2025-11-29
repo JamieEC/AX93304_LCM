@@ -1,4 +1,4 @@
-#Version 1.24
+#Version 1.25
 import serial
 import socket
 
@@ -101,10 +101,10 @@ while True:
     match page:
         case 0:
             setCursorPosition(1, 0)
-            print("Moved cursor to line 1")
+            #print("Moved cursor to line 1")
             lcmSerial.write("Hostname".encode('utf-8'))  # Send text to display
             setCursorPosition(2, 0)  # Move cursor to line 2, position 0
-            print("Moved cursor to line 2")
+            #print("Moved cursor to line 2")
             lcmSerial.write(getHostname().encode('utf-8'))  # Send text to line 2
         case 1:
             setCursorPosition(1, 0)
@@ -115,7 +115,7 @@ while True:
         case 2:
             setCursorPosition(1, 0)
             wanIface = "eth1"
-            lcmSerial.write("LAN IP".encode('utf-8'))  # Send text to display
+            lcmSerial.write("WAN IP".encode('utf-8'))  # Send text to display
             setCursorPosition(2, 0)  # Move cursor to line 2, position 0
             lcmSerial.write(getInterfaceIp(wanIface).encode('utf-8'))  # Send text to display
         case 3:
@@ -124,11 +124,11 @@ while True:
             setCursorPosition(2, 0)  # Move cursor to line 2, position 0
             lcmSerial.write("38%".encode('utf-8'))  # Send text to display
         case -1:
-            page = 0 
-            print("Invalid page, resetting to page 0")
+            page = 3 
+            print("Invalid page")
         case 4:
-            page = 3
-            print("Invalid page, resetting to page 1")
+            page = 0
+            print("Invalid page")
 
 
     page, position = readButtons(page, position)
