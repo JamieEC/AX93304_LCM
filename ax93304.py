@@ -55,7 +55,7 @@ def shiftDisplayLeft():
 def shiftDisplayRight():
     lcmSerial.write(b'\xFE\x1C')  # Command to shift display right
 
-def writeDisplay(page)
+def writeDisplay(page):
     match page:
         case 0:
             lcmSerial.write("HOST:".encode('utf-8'))  # Send text to display
