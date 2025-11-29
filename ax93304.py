@@ -89,7 +89,7 @@ def readButtons(page, position):
     return page, position
 
 displayControl(False)
-displayControl(True)
+
 
 initDisplay()
 page = 0
