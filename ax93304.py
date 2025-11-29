@@ -66,6 +66,10 @@ match page:
         lcmSerial.write(f"WAN:{getInterfaceIp(wanIface)}".encode('utf-8'))  # Send text to display
     case 2:
         page = 0  # Reset page to 0
-        
+
+lcmSerial.write(b'\xFD')  # Keypad listen mode 
+while True:
+    serialData = lcmSerial.read()
+    print(serialData)
 
 lcmSerial.close()  # Close the serial connection
