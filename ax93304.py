@@ -1,9 +1,8 @@
-#Version 1.7
+#Version 1.8
 import serial
 import socket
 
 lcmDevice = "/dev/cuau1"
-
 lcmSerial = serial.Serial(lcmDevice, baudrate=9600, timeout=1)
 
 def backlightControl(on):
@@ -61,38 +60,10 @@ def shiftDisplayRight(position):
         position -= 1
     return position
 
-def writeDisplay(page):
-    match page:
-        case 0:
-            clearDisplay()
-            lcmSerial.write("sHOST:".encode('utf-8'))  # Send text to display
-            setCursorPosition(2, 0)  # Move cursor to line 2, position 0
-            lcmSerial.write(getHostname().encode('utf-8'))  # Send text to line 2
-        case 1:
-            clearDisplay()
-            lanIface = "eth0"
-            wanIface = "eth0"
-            lcmSerial.write(f"sLAN:{getInterfaceIp(lanIface)}".encode('utf-8'))  # Send text to display
-            setCursorPosition(2, 0)  # Move cursor to line 2, position 0
-            lcmSerial.write(f"WAN:{getInterfaceIp(wanIface)}".encode('utf-8'))  # Send text to display
-        case 2:
-            page = 1
-            page = writeDisplay(page)
-        case -1:
-            page = 0 
-            page = writeDisplay(page)
-    return page
-
-
-initDisplay()
-page = 0
-position = 0
-writeDisplay(page)
-
-lcmSerial.write(b'\xFD')  # Keypad listen mode 
-while True:
+def readButtons(page, position):
+    lcmSerial.write(b'\xFD')  # Keypad listen mode 
     serialData = lcmSerial.read()
-    # print(serialData)
+    # print(serialData) # debugging line
     if serialData == b'\x47':  # If 'RIGHT' key is pressed
         print("RIGHT key pressed")
         position = shiftDisplayRight(position)
@@ -102,12 +73,38 @@ while True:
     elif serialData == b'\x4D':  # If 'UP' key is pressed
         print("UP key pressed")
         page += 1
+        clearDisplay()
         position = 0
-        page = writeDisplay(page)
         print(f"Current page: {page}")
     elif serialData == b'\x4B':  # If 'DOWN' key is pressed
         print("DOWN key pressed")
         page -= 1
+        clearDisplay
         position = 0
-        page = writeDisplay(page)
         print(f"Current page: {page}")
+    return page, position
+
+initDisplay()
+page = 0
+position = 0
+
+while True:
+    match page:
+        case 0:
+            #clearDisplay()
+            lcmSerial.write("sHOST:".encode('utf-8'))  # Send text to display
+            setCursorPosition(2, 0)  # Move cursor to line 2, position 0
+            lcmSerial.write(getHostname().encode('utf-8'))  # Send text to line 2
+        case 1:
+            #clearDisplay()
+            lanIface = "eth0"
+            wanIface = "eth0"
+            lcmSerial.write(f"sLAN:{getInterfaceIp(lanIface)}".encode('utf-8'))  # Send text to display
+            setCursorPosition(2, 0)  # Move cursor to line 2, position 0
+            lcmSerial.write(f"WAN:{getInterfaceIp(wanIface)}".encode('utf-8'))  # Send text to display
+        case 2:
+            page = 1
+        case -1:
+            page = 0 
+
+    page, position = readButtons(page, position)
