@@ -82,13 +82,17 @@ while True:
     serialData = lcmSerial.read()
     print(serialData)
     if serialData == b'\x47':  # If 'RIGHT' key is pressed
+        print("RIGHT key pressed")
         shiftDisplayRight()
     elif serialData == b'\x4E':  # If 'LEFT' key is pressed
+        print("LEFT key pressed")
         shiftDisplayLeft()
     elif serialData == b'\x4D':  # If 'UP' key is pressed
+        print("UP key pressed")
         page += 1
         page = writeDisplay(page)
     elif serialData == b'\x4B':  # If 'DOWN' key is pressed
+        print("DOWN key pressed")
         page -= 1
         page = writeDisplay(page)
 
