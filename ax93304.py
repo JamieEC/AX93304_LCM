@@ -1,4 +1,4 @@
-#Version 1.25
+#Version 1.26
 import serial
 import socket
 
@@ -79,12 +79,18 @@ def readButtons(page, position):
         print(f"Current position: {position}")
     elif serialData == b'\x4D':  # If 'UP' key is pressed
         print("UP key pressed")
+        while lcmSerial.read() == b'':
+            print("Waiting for key release...")
+        print("Key released")
         page += 1
         initDisplay()
         position = 0
         print(f"Current page: {page}")
     elif serialData == b'\x4B':  # If 'DOWN' key is pressed
         print("DOWN key pressed")
+        while lcmSerial.read() == b'':
+            print("Waiting for key release...")
+        print("Key released")
         page -= 1
         initDisplay()
         position = 0
