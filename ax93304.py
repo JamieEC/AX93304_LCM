@@ -1,4 +1,4 @@
-#Version 1.31
+#Version 1.32
 import serial
 import socket
 import subprocess
@@ -111,7 +111,7 @@ def getRamUsage():
         return "N/A"
 
 def initDisplay():
-    backlightControl(True)
+    #backlightControl(True)
     clearDisplay()
     homePosition()
 
@@ -200,15 +200,15 @@ while True:
     
     # Exit screensaver mode on button press
     if screensaver_mode:
-        # Check for any button press to exit screensaver
-        lcmSerial.write(b'\xFD')
-        serialData = lcmSerial.read()
-        if serialData in [b'\x47', b'\x4E', b'\x4D', b'\x4B']:
-            screensaver_mode = False
-            backlightControl(True)
-            inactivity_time = current_time
-            initDisplay()
-            print("Exiting screensaver mode...")
+    #     # Check for any button press to exit screensaver
+    #     lcmSerial.write(b'\xFD')
+    #     serialData = lcmSerial.read()
+    #     if serialData in [b'\x47', b'\x4E', b'\x4D', b'\x4B']:
+    #         screensaver_mode = False
+    #         backlightControl(True)
+    #         inactivity_time = current_time
+    #         initDisplay()
+    #         print("Exiting screensaver mode...")
         
         # Cycle pages every 10 seconds in screensaver mode
         if current_time - screensaver_last_page_change > 10:
