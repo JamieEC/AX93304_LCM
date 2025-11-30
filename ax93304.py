@@ -1,4 +1,4 @@
-#Version 1.31.1
+#Version 1.31.2
 import serial
 import socket
 import subprocess
@@ -133,16 +133,16 @@ def readButtons(page, position):
     # print(serialData) # debugging line
     if serialData == b'\x47':  # If 'RIGHT' key is pressed
         print("RIGHT key pressed")
+        activity = True
         position = shiftDisplayRight(position)
         print(f"Current position: {position}")
-        backlightControl(True)
     elif serialData == b'\x4E':  # If 'LEFT' key is pressed
         print("LEFT key pressed")
+        activity = True
         position = shiftDisplayLeft(position)
         print(f"Current position: {position}")
-        backlightControl(True)
     elif serialData == b'\x4D':  # If 'UP' key is pressed
-        backlightControl(True)
+        activity = True
         #print("UP key pressed")
         while lcmSerial.read() != b'O':
             print("Wait")
@@ -152,7 +152,7 @@ def readButtons(page, position):
         position = 0
         print(f"Current page: {page}")
     elif serialData == b'\x4B':  # If 'DOWN' key is pressed
-        backlightControl(True)
+        activity = True
         print("DOWN key pressed")
         while lcmSerial.read() != b'O':
             print("Wait")
@@ -161,7 +161,9 @@ def readButtons(page, position):
         initDisplay()
         position = 0
         print(f"Current page: {page}")
-    return page, position
+    else:
+        activity = False
+    return page, position, activity
 
 displayControl(True)
 initDisplay()
