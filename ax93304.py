@@ -1,4 +1,4 @@
-#Version 1.31
+#Version 1.31.1
 import serial
 import socket
 import subprocess
@@ -181,6 +181,8 @@ print("RAM Usage:", getRamUsage())
 print("Starting main loop...")
 
 lastActivityTime = time.time()
+activity = False
+screenSaverMode = False
 
 while True:
 
