@@ -1,4 +1,4 @@
-#Version 1.28
+#Version 1.29
 import serial
 import socket
 import subprocess
@@ -75,6 +75,40 @@ def getInterfaceIpv6(interface):
         print(f"Error getting IPv6 for {interface}: {e}")
         return "N/A"
 
+def getCpuLoad():
+    try:
+        result = subprocess.run(['top', '-bn1'], capture_output=True, text=True, timeout=5)
+        if result.returncode == 0:
+            # Parse the output to find CPU usage
+            match = re.search(r'CPU:\s+(\d+\.\d+)%\s+user', result.stdout)
+            if match:
+                return match.group(1) + "%"
+        return "N/A"
+    except (subprocess.TimeoutExpired, FileNotFoundError, Exception) as e:
+        print(f"Error getting CPU load: {e}")
+        return "N/A"
+
+def getRamUsage():
+    try:
+        result = subprocess.run(['sysctl', 'hw.physmem', 'vm.stats.vm.v_page_count', 'vm.stats.vm.v_free_count'], 
+                               capture_output=True, text=True, timeout=5)
+        if result.returncode == 0:
+            # Parse sysctl output for memory info
+            physmem_match = re.search(r'hw\.physmem:\s+(\d+)', result.stdout)
+            free_match = re.search(r'vm\.stats\.vm\.v_free_count:\s+(\d+)', result.stdout)
+            total_match = re.search(r'vm\.stats\.vm\.v_page_count:\s+(\d+)', result.stdout)
+            
+            if physmem_match and total_match and free_match:
+                total_pages = int(total_match.group(1))
+                free_pages = int(free_match.group(1))
+                used_pages = total_pages - free_pages
+                ram_percent = (used_pages / total_pages) * 100
+                return f"{ram_percent:.1f}%"
+        return "N/A"
+    except (subprocess.TimeoutExpired, FileNotFoundError, Exception) as e:
+        print(f"Error getting RAM usage: {e}")
+        return "N/A"
+
 def initDisplay():
     backlightControl(True)
     clearDisplay()
@@ -105,10 +139,10 @@ def readButtons(page, position):
         position = shiftDisplayLeft(position)
         print(f"Current position: {position}")
     elif serialData == b'\x4D':  # If 'UP' key is pressed
-        print("UP key pressed")
+        #print("UP key pressed")
         while lcmSerial.read() != b'O':
-            print("Waiting for key release...")
-        print("Key released")
+            print("Wait")
+        #print("Up Key released")
         page += 1
         initDisplay()
         position = 0
@@ -116,8 +150,8 @@ def readButtons(page, position):
     elif serialData == b'\x4B':  # If 'DOWN' key is pressed
         print("DOWN key pressed")
         while lcmSerial.read() != b'O':
-            print("Waiting for key release...")
-        print("Key released")
+            print("Wait")
+        print("Down Key released")
         page -= 1
         initDisplay()
         position = 0
@@ -130,11 +164,16 @@ initDisplay()
 page = 0
 position = 0
 
-print("LAN Interface IPv4:", getInterfaceIpv4(lanIface))
-print("WAN Interface IPv4:", getInterfaceIpv4(wanIface))
+# print("LAN Interface IPv4:", getInterfaceIpv4(lanIface))
+# print("WAN Interface IPv4:", getInterfaceIpv4(wanIface))
 
-print("LAN Interface IPv6:", getInterfaceIpv6(lanIface))
-print("WAN Interface IPv6:", getInterfaceIpv6(wanIface))
+# print("LAN Interface IPv6:", getInterfaceIpv6(lanIface))
+# print("WAN Interface IPv6:", getInterfaceIpv6(wanIface))
+
+print("CPU Load:", getCpuLoad())
+print("RAM Usage:", getRamUsage())
+
+print("Starting main loop...")
 
 while True:
     match page:
@@ -157,13 +196,23 @@ while True:
             lcmSerial.write(getInterfaceIpv4(wanIface).encode('utf-8'))  # Send text to display
         case 3:
             setCursorPosition(1, 0)
+            lcmSerial.write("LAN IPv6".encode('utf-8'))  # Send text to display
+            setCursorPosition(2, 0)  # Move cursor to line 2, position 0
+            lcmSerial.write(getInterfaceIpv6(lanIface).encode('utf-8'))  # Send text to display
+        case 4:
+            setCursorPosition(1, 0)
+            lcmSerial.write("WAN IPv6".encode('utf-8'))  # Send text to display
+            setCursorPosition(2, 0)  # Move cursor to line 2, position 0
+            lcmSerial.write(getInterfaceIpv6(wanIface).encode('utf-8'))  # Send text to display
+        case 5:
+            setCursorPosition(1, 0)
             lcmSerial.write("CPU".encode('utf-8'))  # Send text to display
             setCursorPosition(2, 0)  # Move cursor to line 2, position 0
             lcmSerial.write("38%".encode('utf-8'))  # Send text to display
         case -1:
-            page = 3 
+            page = 5 
             print("Invalid page")
-        case 4:
+        case 6:
             page = 0
             print("Invalid page")
 
