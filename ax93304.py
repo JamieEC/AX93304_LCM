@@ -1,8 +1,9 @@
-#Version 1.29.1
+#Version 1.31
 import serial
 import socket
 import subprocess
 import re
+import time
 
 lcmDevice = "/dev/cuau1"
 lcmSerial = serial.Serial(lcmDevice, baudrate=9600, timeout=1)
@@ -126,7 +127,7 @@ def shiftDisplayRight(position):
         position -= 1
     return position
 
-def readButtons(page, position):
+def readButtons(page, position, inactivity_time):
     lcmSerial.write(b'\xFD')  # Keypad listen mode 
     serialData = lcmSerial.read()
     # print(serialData) # debugging line
@@ -134,11 +135,16 @@ def readButtons(page, position):
         print("RIGHT key pressed")
         position = shiftDisplayRight(position)
         print(f"Current position: {position}")
+        backlightControl(True)
+        inactivity_time = time.time()
     elif serialData == b'\x4E':  # If 'LEFT' key is pressed
         print("LEFT key pressed")
         position = shiftDisplayLeft(position)
         print(f"Current position: {position}")
+        backlightControl(True)
+        inactivity_time = time.time()
     elif serialData == b'\x4D':  # If 'UP' key is pressed
+        backlightControl(True)
         #print("UP key pressed")
         while lcmSerial.read() != b'O':
             print("Wait")
@@ -147,7 +153,9 @@ def readButtons(page, position):
         initDisplay()
         position = 0
         print(f"Current page: {page}")
+        inactivity_time = time.time()
     elif serialData == b'\x4B':  # If 'DOWN' key is pressed
+        backlightControl(True)
         print("DOWN key pressed")
         while lcmSerial.read() != b'O':
             print("Wait")
@@ -156,13 +164,17 @@ def readButtons(page, position):
         initDisplay()
         position = 0
         print(f"Current page: {page}")
-    return page, position
+        inactivity_time = time.time()
+    return page, position, inactivity_time
 
 displayControl(True)
 initDisplay()
 
 page = 0
 position = 0
+inactivity_time = time.time()
+screensaver_last_page_change = time.time()
+screensaver_mode = False
 
 # print("LAN Interface IPv4:", getInterfaceIpv4(lanIface))
 # print("WAN Interface IPv4:", getInterfaceIpv4(wanIface))
@@ -176,6 +188,34 @@ print("RAM Usage:", getRamUsage())
 print("Starting main loop...")
 
 while True:
+    current_time = time.time()
+    time_since_activity = current_time - inactivity_time
+    
+    # Check if 1 minute (60 seconds) of inactivity
+    if time_since_activity > 60 and not screensaver_mode:
+        screensaver_mode = True
+        backlightControl(False)
+        screensaver_last_page_change = current_time
+        print("Entering screensaver mode...")
+    
+    # Exit screensaver mode on button press
+    if screensaver_mode:
+        # Check for any button press to exit screensaver
+        lcmSerial.write(b'\xFD')
+        serialData = lcmSerial.read()
+        if serialData in [b'\x47', b'\x4E', b'\x4D', b'\x4B']:
+            screensaver_mode = False
+            backlightControl(True)
+            inactivity_time = current_time
+            initDisplay()
+            print("Exiting screensaver mode...")
+        
+        # Cycle pages every 10 seconds in screensaver mode
+        if current_time - screensaver_last_page_change > 10:
+            page += 1
+            screensaver_last_page_change = current_time
+            initDisplay()
+    
     match page:
         case 0:
             setCursorPosition(1, 0)
@@ -208,13 +248,18 @@ while True:
             setCursorPosition(1, 0)
             lcmSerial.write("CPU".encode('utf-8'))  # Send text to display
             setCursorPosition(2, 0)  # Move cursor to line 2, position 0
-            lcmSerial.write("38%".encode('utf-8'))  # Send text to display
-        case -1:
-            page = 5 
-            print("Invalid page")
+            lcmSerial.write(getCpuLoad().encode('utf-8'))  # Send text to display
         case 6:
+            setCursorPosition(1, 0)
+            lcmSerial.write("RAM".encode('utf-8'))  # Send text to display
+            setCursorPosition(2, 0)  # Move cursor to line 2, position 0
+            lcmSerial.write(getRamUsage().encode('utf-8'))  # Send text to display
+        case -1:
+            page = 6 
+            print("Invalid page")
+        case 7:
             page = 0
             print("Invalid page")
 
-
-    page, position = readButtons(page, position)
+    if not screensaver_mode:
+        page, position, inactivity_time = readButtons(page, position, inactivity_time)
