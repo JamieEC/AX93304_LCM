@@ -1,4 +1,4 @@
-#Version 1.32
+#Version 1.32.1
 import serial
 import socket
 import subprocess
@@ -195,7 +195,7 @@ while True:
         screenSaverMode = False
     elif currentTime - lastActivityTime > 60:
         screenSaverMode = True
-        backlightControl(False)
+        #backlightControl(False)
 
     if screenSaverMode:
         screenSaverTime = currentTime
