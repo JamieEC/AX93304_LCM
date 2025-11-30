@@ -1,9 +1,14 @@
-#Version 1.27
+#Version 1.28
 import serial
 import socket
+import subprocess
+import re
 
 lcmDevice = "/dev/cuau1"
 lcmSerial = serial.Serial(lcmDevice, baudrate=9600, timeout=1)
+
+lanIface = "lagg0.10"
+wanIface = "igb4"
 
 def backlightControl(on):
     if on:
@@ -42,11 +47,33 @@ def setCursorPosition(line, position):
 def getHostname():
     return socket.gethostname()
 
-def getInterfaceIp(interface):
-    if interface == "eth0":
-        return "192.168.100.200"  # Placeholder for actual IP retrieval
-    else:
-        return "192.0.2.100"  # Placeholder for actual IP retrieval
+def getInterfaceIpv4(interface):
+    try:
+        result = subprocess.run(['ifconfig', interface], capture_output=True, text=True, timeout=5)
+        if result.returncode == 0:
+            # Parse the output to find the IPv4 address
+            match = re.search(r'inet\s+(\d+\.\d+\.\d+\.\d+)', result.stdout)
+            if match:
+                return match.group(1)
+        return "N/A"
+    except (subprocess.TimeoutExpired, FileNotFoundError, Exception) as e:
+        print(f"Error getting IP for {interface}: {e}")
+        return "N/A"
+
+def getInterfaceIpv6(interface):
+    try:
+        result = subprocess.run(['ifconfig', interface], capture_output=True, text=True, timeout=5)
+        if result.returncode == 0:
+            # Parse the output to find IPv6 addresses (excluding link-local)
+            matches = re.findall(r'inet6\s+([a-f0-9:]+)', result.stdout)
+            for ipv6 in matches:
+                # Skip link-local addresses (start with fe80)
+                if not ipv6.lower().startswith('fe80'):
+                    return ipv6
+        return "N/A"
+    except (subprocess.TimeoutExpired, FileNotFoundError, Exception) as e:
+        print(f"Error getting IPv6 for {interface}: {e}")
+        return "N/A"
 
 def initDisplay():
     backlightControl(True)
@@ -103,6 +130,12 @@ initDisplay()
 page = 0
 position = 0
 
+print("LAN Interface IPv4:", getInterfaceIpv4(lanIface))
+print("WAN Interface IPv4:", getInterfaceIpv4(wanIface))
+
+print("LAN Interface IPv6:", getInterfaceIpv6(lanIface))
+print("WAN Interface IPv6:", getInterfaceIpv6(wanIface))
+
 while True:
     match page:
         case 0:
@@ -114,16 +147,14 @@ while True:
             lcmSerial.write(getHostname().encode('utf-8'))  # Send text to line 2
         case 1:
             setCursorPosition(1, 0)
-            lanIface = "eth0"
-            lcmSerial.write("LAN IP".encode('utf-8'))  # Send text to display
+            lcmSerial.write("LAN IPv4".encode('utf-8'))  # Send text to display
             setCursorPosition(2, 0)  # Move cursor to line 2, position 0
-            lcmSerial.write(getInterfaceIp(lanIface).encode('utf-8'))  # Send text to display
+            lcmSerial.write(getInterfaceIpv4(lanIface).encode('utf-8'))  # Send text to display
         case 2:
             setCursorPosition(1, 0)
-            wanIface = "eth1"
-            lcmSerial.write("WAN IP".encode('utf-8'))  # Send text to display
+            lcmSerial.write("WAN IPv4".encode('utf-8'))  # Send text to display
             setCursorPosition(2, 0)  # Move cursor to line 2, position 0
-            lcmSerial.write(getInterfaceIp(wanIface).encode('utf-8'))  # Send text to display
+            lcmSerial.write(getInterfaceIpv4(wanIface).encode('utf-8'))  # Send text to display
         case 3:
             setCursorPosition(1, 0)
             lcmSerial.write("CPU".encode('utf-8'))  # Send text to display
