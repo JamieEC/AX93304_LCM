@@ -1,4 +1,4 @@
-#Version 1.29
+#Version 1.29.1
 import serial
 import socket
 import subprocess
@@ -77,7 +77,7 @@ def getInterfaceIpv6(interface):
 
 def getCpuLoad():
     try:
-        result = subprocess.run(['top', '-bn1'], capture_output=True, text=True, timeout=5)
+        result = subprocess.run(['top', '-bn'], capture_output=True, text=True, timeout=5)
         if result.returncode == 0:
             # Parse the output to find CPU usage
             match = re.search(r'CPU:\s+(\d+\.\d+)%\s+user', result.stdout)
