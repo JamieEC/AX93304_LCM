@@ -1,4 +1,4 @@
-#Version 1.32.1
+#Version 1.32.2
 import serial
 import socket
 import subprocess
@@ -167,6 +167,7 @@ def readButtons(page, position):
 
 displayControl(True)
 initDisplay()
+backlightControl(True)
 
 page = 0
 position = 0
