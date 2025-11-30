@@ -1,4 +1,4 @@
-#Version 1.31.2
+#Version 1.32
 import serial
 import socket
 import subprocess
@@ -198,7 +198,11 @@ while True:
         backlightControl(False)
 
     if screenSaverMode:
-        print("Screen saver mode active")
+        screenSaverTime = currentTime
+        if currentTime - screenSaverTime > 10:
+            page += 1
+            print(f"Screen saver changing to page: {page}")
+            screenSaverTime = currentTime
 
     match page:
         case 0:
