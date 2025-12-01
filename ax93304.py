@@ -197,13 +197,13 @@ while True:
         backlightControl(True)
         lastActivityTime = currentTime
         screenSaverMode = False
-    elif currentTime - lastActivityTime > 60:
+    elif currentTime - lastActivityTime > 600:
         #print("Entering screen saver mode...")
         screenSaverMode = True
         #backlightControl(False)
 
     if screenSaverMode:
-        if currentTime - screenSaverTime > 10:
+        if currentTime - screenSaverTime > 30:
             page += 1
             #print(f"Screen saver changing to page: {page}")
             initDisplay()
@@ -240,9 +240,9 @@ while True:
             lcmSerial.write(getInterfaceIpv6(wanIface).encode('utf-8'))  # Send text to display
         case 5:
             setCursorPosition(1, 0)
-            lcmSerial.write(("CPU      " + getCpuLoad()).encode('utf-8'))  # Send text to display
+            lcmSerial.write(("CPU        " + getCpuLoad()).encode('utf-8'))  # Send text to display
             setCursorPosition(2, 0)  # Move cursor to line 2, position 0
-            lcmSerial.write(("RAM      " + getRamUsage()).encode('utf-8'))  # Send text to display
+            lcmSerial.write(("RAM        " + getRamUsage()).encode('utf-8'))  # Send text to display
         case -1:
             page = 5 
             print("Invalid page")
