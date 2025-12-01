@@ -198,7 +198,7 @@ while True:
         lastActivityTime = currentTime
         screenSaverMode = False
     elif currentTime - lastActivityTime > 60:
-        print("Entering screen saver mode...")
+        #print("Entering screen saver mode...")
         screenSaverMode = True
         #backlightControl(False)
 
