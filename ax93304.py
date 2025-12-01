@@ -1,4 +1,4 @@
-#Version 1.32.6
+#Version 1.33
 import serial
 import socket
 import subprocess
@@ -173,14 +173,16 @@ backlightControl(True)
 page = 0
 position = 0
 
+print("Starting AX93304 LCM Display version 1.33")
+
 # print("LAN Interface IPv4:", getInterfaceIpv4(lanIface))
 # print("WAN Interface IPv4:", getInterfaceIpv4(wanIface))
 
 # print("LAN Interface IPv6:", getInterfaceIpv6(lanIface))
 # print("WAN Interface IPv6:", getInterfaceIpv6(wanIface))
 
-print("CPU Load:", getCpuLoad())
-print("RAM Usage:", getRamUsage())
+# print("CPU Load:", getCpuLoad())
+# print("RAM Usage:", getRamUsage())
 
 print("Starting main loop...")
 
