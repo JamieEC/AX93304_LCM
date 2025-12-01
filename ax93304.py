@@ -1,4 +1,4 @@
-#Version 1.32.3
+#Version 1.32.4
 import serial
 import socket
 import subprocess
@@ -184,6 +184,8 @@ print("RAM Usage:", getRamUsage())
 print("Starting main loop...")
 
 lastActivityTime = time.time()
+screenSaverTime = time.time()
+
 activity = False
 screenSaverMode = False
 
@@ -235,9 +237,9 @@ while True:
             lcmSerial.write(getInterfaceIpv6(wanIface).encode('utf-8'))  # Send text to display
         case 5:
             setCursorPosition(1, 0)
-            lcmSerial.write("CPU".encode('utf-8'))  # Send text to display
+            lcmSerial.write(("CPU" + getCpuLoad()).encode('utf-8'))  # Send text to display
             setCursorPosition(2, 0)  # Move cursor to line 2, position 0
-            lcmSerial.write("38%".encode('utf-8'))  # Send text to display
+            lcmSerial.write(("RAM" + getRamUsage()).encode('utf-8'))  # Send text to display
         case -1:
             page = 5 
             print("Invalid page")
