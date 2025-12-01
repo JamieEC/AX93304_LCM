@@ -1,4 +1,4 @@
-#Version 1.32.4
+#Version 1.32.5
 import serial
 import socket
 import subprocess
@@ -204,7 +204,9 @@ while True:
     if screenSaverMode:
         if currentTime - screenSaverTime > 10:
             page += 1
-            print(f"Screen saver changing to page: {page}")
+            #print(f"Screen saver changing to page: {page}")
+            initDisplay()
+            position = 0
             screenSaverTime = currentTime
 
     match page:
