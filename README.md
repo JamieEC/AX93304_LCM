@@ -4,29 +4,14 @@ A Python-based system monitor for the Axiomtek AX93304 LCD display. This softwar
 
 ## Overview
 
-This software is designed to run on pfSense systems but is compatible with most Linux distributions. It provides a convenient way to monitor critical network and system metrics directly from the hardware LCD display panel.
-
-## Features
-
-- **Hostname Display** - Shows the system hostname
-- **Network Monitoring** - Displays IPv4 and IPv6 addresses for both LAN and WAN interfaces
-- **System Resources** - Real-time CPU load percentage and RAM usage
-- **Screen Navigation** - Use arrow keys to navigate between different display pages
-- **Screen Saver Mode** - Automatically cycles through pages after 10 minutes of inactivity and dims the backlight
-- **Activity Detection** - Backlight restores on user interaction
+This software is designed to run on pfSense systems but is compatible with most Linux distributions. It provides a set of functions to interact with the display and can easily be forked and edited to fit most needs.
 
 ## Requirements
 
 - Python 3.x
 - pySerial library
 - Serial connection to the AX93304 LCD display (default: `/dev/cuau1`)
-- Commands: `ifconfig`, `top`, `sysctl` (standard on pfSense and Linux)
-
-### Installation
-
-```bash
-pip install pyserial
-```
+- Commands: `ifconfig`, `top`, `sysctl` (standard on pfSense and most Linux distros)
 
 ## Configuration
 
@@ -57,7 +42,7 @@ To run this software automatically at boot on pfSense:
 1. Install the **shellcmd** package via System > Package Manager
 2. Navigate to Services > Shell Command
 3. Add a new command with:
-   - **Command**: `/usr/bin/python3 /path/to/ax93304.py &`
+   - **Command**: `/usr/bin/python3.11 /path/to/ax93304.py &`
    - **PHP Shellcmd when** - Select your preferred timing (e.g., "Bootup")
 4. Click Add and Save
 
@@ -94,26 +79,9 @@ Connect the AX93304 LCD display to the system via serial connection:
 
 Adjust the `lcmDevice` variable if using a different serial port.
 
-## Troubleshooting
-
-### Display Not Updating
-- Verify the serial port path is correct
-- Check permissions on the serial device: `ls -la /dev/cuau1`
-- Ensure the display is powered and connected
-
-### Function Errors
-- Confirm all required commands are available: `which ifconfig top sysctl`
-- Check interface names match your system configuration
-- Verify pySerial is installed: `python3 -c "import serial"`
-
-### IPv6 Address Shows "N/A"
-- Ensure the interface has an IPv6 address configured
-- Check that it's not a link-local address (fe80::)
-- Verify IPv6 is enabled on the network interface
-
 ## API Functions
 
-The following functions are available for system monitoring:
+The following functions are available:
 
 - `getHostname()` - Returns system hostname
 - `getInterfaceIpv4(interface)` - Returns IPv4 address for interface
@@ -123,16 +91,6 @@ The following functions are available for system monitoring:
 - `backlightControl(on)` - Enable/disable display backlight
 - `clearDisplay()` - Clear LCD display
 - `setCursorPosition(line, position)` - Set cursor position (line 1-2, position 0-15)
-
-## Compatibility
-
-- **pfSense** (FreeBSD-based) - Primary target
-- **Linux** - Ubuntu, Debian, CentOS, etc.
-- Any system with Python 3 and standard Unix utilities
-
-## License
-
-See LICENSE file for details.
 
 ## Version
 
