@@ -42,7 +42,7 @@ To run this software automatically at boot on pfSense:
 1. Install the **shellcmd** package via System > Package Manager
 2. Navigate to Services > Shell Command
 3. Add a new command with:
-   - **Command**: `/usr/bin/python3.11 /path/to/ax93304.py &`
+   - **Command**: `/usr/bin/python3.11 /path/to/ax93304.py`
    - **Shellcmd Type** - Select your preferred time to start the script (e.g., "shellcmd")
 4. Click Add and Save
 
