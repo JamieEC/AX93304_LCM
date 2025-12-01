@@ -1,4 +1,4 @@
-#Version 1.33
+#Version 1.33.1
 import serial
 import socket
 import subprocess
@@ -112,7 +112,6 @@ def getRamUsage():
         return "N/A"
 
 def initDisplay():
-    #backlightControl(True)
     clearDisplay()
     homePosition()
 
@@ -166,14 +165,14 @@ def readButtons(page, position):
         activity = False
     return page, position, activity
 
+print("Starting AX93304 LCM Display version 1.33")
+
 displayControl(True)
 initDisplay()
 backlightControl(True)
 
 page = 0
 position = 0
-
-print("Starting AX93304 LCM Display version 1.33")
 
 # print("LAN Interface IPv4:", getInterfaceIpv4(lanIface))
 # print("WAN Interface IPv4:", getInterfaceIpv4(wanIface))
