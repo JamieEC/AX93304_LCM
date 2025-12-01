@@ -43,7 +43,7 @@ To run this software automatically at boot on pfSense:
 2. Navigate to Services > Shell Command
 3. Add a new command with:
    - **Command**: `/usr/bin/python3.11 /path/to/ax93304.py &`
-   - **PHP Shellcmd when** - Select your preferred timing (e.g., "Bootup")
+   - **Shellcmd Type** - Select your preferred time to start the script (e.g., "shellcmd")
 4. Click Add and Save
 
 Alternatively, run as a daemon process:
