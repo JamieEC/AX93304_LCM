@@ -1,4 +1,4 @@
-#Version 1.32.5
+#Version 1.32.6
 import serial
 import socket
 import subprocess
@@ -83,6 +83,7 @@ def getCpuLoad():
             # Parse the output to find CPU usage
             match = re.search(r'CPU:\s+(\d+\.\d+)%\s+user', result.stdout)
             if match:
+                print(f"CPU Load found: {match.group(1)}%")
                 return match.group(1) + "%"
         return "N/A"
     except (subprocess.TimeoutExpired, FileNotFoundError, Exception) as e:
@@ -239,9 +240,9 @@ while True:
             lcmSerial.write(getInterfaceIpv6(wanIface).encode('utf-8'))  # Send text to display
         case 5:
             setCursorPosition(1, 0)
-            lcmSerial.write(("CPU" + getCpuLoad()).encode('utf-8'))  # Send text to display
+            lcmSerial.write(("CPU      " + getCpuLoad()).encode('utf-8'))  # Send text to display
             setCursorPosition(2, 0)  # Move cursor to line 2, position 0
-            lcmSerial.write(("RAM" + getRamUsage()).encode('utf-8'))  # Send text to display
+            lcmSerial.write(("RAM      " + getRamUsage()).encode('utf-8'))  # Send text to display
         case -1:
             page = 5 
             print("Invalid page")
